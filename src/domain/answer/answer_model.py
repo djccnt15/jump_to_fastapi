@@ -1,6 +1,6 @@
 import datetime
 
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, ConfigDict, field_validator
 
 
 class AnswerCreate(BaseModel):
@@ -13,7 +13,9 @@ class AnswerCreate(BaseModel):
         return v
 
 
-class Answer(BaseModel):
+class AnswerResponse(BaseModel):
     id: int
     content: str
     create_date: datetime.datetime
+
+    model_config = ConfigDict(from_attributes=True)

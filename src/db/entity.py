@@ -1,10 +1,10 @@
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import relationship
 
-from database import Base
+from src.db import Base
 
 
-class Question(Base):
+class QuestionEntity(Base):
     __tablename__ = "question"
 
     id = Column(Integer, primary_key=True)
@@ -13,11 +13,12 @@ class Question(Base):
     create_date = Column(DateTime, nullable=False)
 
 
-class Answer(Base):
+class AnswerEntity(Base):
     __tablename__ = "answer"
 
     id = Column(Integer, primary_key=True)
     content = Column(Text, nullable=False)
     create_date = Column(DateTime, nullable=False)
     question_id = Column(Integer, ForeignKey("question.id"))
-    question = relationship("Question", backref="answers")
+
+    question = relationship("QuestionEntity", backref="answers")
