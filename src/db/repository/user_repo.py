@@ -13,3 +13,7 @@ def get_user_by_username_email(db: Session, user_create: UserCreate):
         )
         .first()
     )
+
+
+def get_user(db: Session, username: str):
+    return db.query(UserEntity).filter(UserEntity.username == username).first()
