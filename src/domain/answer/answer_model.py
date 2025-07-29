@@ -2,6 +2,8 @@ import datetime
 
 from pydantic import BaseModel, ConfigDict, field_validator
 
+from src.domain.user.user_model import User
+
 
 class AnswerCreate(BaseModel):
     content: str
@@ -17,5 +19,6 @@ class AnswerResponse(BaseModel):
     id: int
     content: str
     create_date: datetime.datetime
+    user: User | None
 
     model_config = ConfigDict(from_attributes=True)

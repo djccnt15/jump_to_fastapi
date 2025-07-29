@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel, EmailStr, field_validator
+from pydantic import BaseModel, ConfigDict, EmailStr, field_validator
 from pydantic_core.core_schema import FieldValidationInfo
 
 
@@ -32,3 +32,11 @@ class Token(BaseModel):
 class TokenData(BaseModel):
     sub: str
     exp: datetime
+
+
+class User(BaseModel):
+    id: int
+    username: str
+    email: str
+
+    model_config = ConfigDict(from_attributes=True)

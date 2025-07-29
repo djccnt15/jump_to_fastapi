@@ -3,6 +3,7 @@ import datetime
 from pydantic import BaseModel, ConfigDict, field_validator
 
 from src.domain.answer.answer_model import AnswerResponse
+from src.domain.user.user_model import User
 
 
 class QuestionResponse(BaseModel):
@@ -11,6 +12,7 @@ class QuestionResponse(BaseModel):
     content: str
     create_date: datetime.datetime
     answers: list[AnswerResponse] = []
+    user: User | None
 
     model_config = ConfigDict(from_attributes=True)
 
