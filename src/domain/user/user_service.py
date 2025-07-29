@@ -16,7 +16,7 @@ from .user_model import Token, TokenData, UserCreate
 
 
 def create_user(db: Session, user_create: UserCreate):
-    user = user_repo.get_user_by_username_email(db, user_create)
+    user = user_repo.get_user_by_username_email(db, user_create=user_create)
     if user:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
@@ -33,7 +33,7 @@ def create_user(db: Session, user_create: UserCreate):
 
 def create_user_token(form_data: OAuth2PasswordRequestForm, db: Session) -> Token:
     # check user and password
-    user = user_repo.get_user(db, form_data.username)
+    user = user_repo.get_user(db, username=form_data.username)
     if not user or not configuration.pwd_context.verify(
         form_data.password, user.password
     ):

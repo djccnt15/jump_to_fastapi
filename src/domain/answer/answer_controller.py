@@ -19,4 +19,9 @@ def answer_create(
     db: Session = Depends(get_db),
     current_user: UserEntity = Depends(user_service.get_current_user),
 ) -> None:
-    answer_service.create_answer(question_id, _answer_create, db, current_user)
+    answer_service.create_answer(
+        question_id=question_id,
+        answer_create=_answer_create,
+        db=db,
+        user=current_user,
+    )

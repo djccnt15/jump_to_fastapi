@@ -5,6 +5,7 @@ from src.db.entity import QuestionEntity
 
 def get_question_list(
     db: Session,
+    *,
     skip: int = 0,
     limit: int = 10,
 ) -> tuple[int, list[QuestionEntity]]:
@@ -15,6 +16,6 @@ def get_question_list(
     return total, question_list
 
 
-def get_question(db: Session, question_id: int) -> QuestionEntity | None:
+def get_question(db: Session, *, question_id: int) -> QuestionEntity | None:
     question = db.query(QuestionEntity).get(question_id)
     return question

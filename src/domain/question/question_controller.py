@@ -18,7 +18,7 @@ def question_list(
     page: int = 0,
     size: int = 10,
 ) -> QuestionList:
-    question_list = question_service.get_question_list(db, page=page, size=size)
+    question_list = question_service.get_question_list(db=db, page=page, size=size)
     return question_list
 
 
@@ -27,7 +27,7 @@ def question_detail(
     question_id: int,
     db: Session = Depends(get_db),
 ) -> QuestionResponse:
-    question = question_service.get_question_detail(db, question_id)
+    question = question_service.get_question_detail(db=db, id=question_id)
     return question
 
 
@@ -37,4 +37,8 @@ def question_create(
     db: Session = Depends(get_db),
     current_user: UserEntity = Depends(user_service.get_current_user),
 ) -> None:
-    question_service.create_question(db, question_create, current_user)
+    question_service.create_question(
+        db=db,
+        question_create=question_create,
+        user=current_user,
+    )
