@@ -2,7 +2,7 @@ from datetime import datetime
 
 from sqlalchemy.orm import Session
 
-from src.db.entity import QuestionEntity
+from src.db.entity import QuestionEntity, UserEntity
 from src.db.repository import create_entity, question_repo
 
 from .question_model import QuestionCreate, QuestionList, QuestionResponse
@@ -22,10 +22,11 @@ def get_question_detail(db: Session, id: int):
     return QuestionResponse.model_validate(question)
 
 
-def create_question(db: Session, question_create: QuestionCreate):
+def create_question(db: Session, question_create: QuestionCreate, user: UserEntity):
     entity = QuestionEntity(
         subject=question_create.subject,
         content=question_create.content,
         create_date=datetime.now(),
+        user=user,
     )
     create_entity(db=db, entity=entity)

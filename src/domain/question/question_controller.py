@@ -3,6 +3,8 @@ from sqlalchemy.orm import Session
 from starlette import status
 
 from src.db.database import get_db
+from src.db.entity import UserEntity
+from src.domain.user import user_service
 
 from . import question_service
 from .question_model import QuestionCreate, QuestionList, QuestionResponse
@@ -33,5 +35,6 @@ def question_detail(
 def question_create(
     question_create: QuestionCreate,
     db: Session = Depends(get_db),
+    current_user: UserEntity = Depends(user_service.get_current_user),
 ) -> None:
-    question_service.create_question(db, question_create)
+    question_service.create_question(db, question_create, current_user)

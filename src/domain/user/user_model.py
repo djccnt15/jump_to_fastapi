@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import BaseModel, EmailStr, field_validator
 from pydantic_core.core_schema import FieldValidationInfo
 
@@ -25,3 +27,8 @@ class Token(BaseModel):
     access_token: str
     token_type: str
     username: str
+
+
+class TokenData(BaseModel):
+    sub: str
+    exp: datetime
