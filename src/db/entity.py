@@ -14,6 +14,7 @@ class QuestionEntity(BaseEntity):
     content: Mapped[str] = mapped_column(Text, nullable=False)
     create_date: Mapped[datetime] = mapped_column(DateTime, nullable=False)
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"), nullable=True)
+    modify_date: Mapped[datetime] = mapped_column(DateTime, nullable=True)
 
     user: Mapped["UserEntity"] = relationship("UserEntity", backref="question_users")
 
@@ -26,6 +27,7 @@ class AnswerEntity(BaseEntity):
     create_date: Mapped[datetime] = mapped_column(DateTime, nullable=False)
     question_id: Mapped[int] = mapped_column(Integer, ForeignKey("question.id"))
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"), nullable=True)
+    modify_date: Mapped[datetime] = mapped_column(DateTime, nullable=True)
 
     question: Mapped[QuestionEntity] = relationship("QuestionEntity", backref="answers")
     user: Mapped["UserEntity"] = relationship("UserEntity", backref="answer_users")

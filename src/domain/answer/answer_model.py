@@ -19,6 +19,16 @@ class AnswerResponse(BaseModel):
     id: int
     content: str
     create_date: datetime.datetime
+    question_id: int
+    modify_date: datetime.datetime | None = None
     user: User | None
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class AnswerUpdate(AnswerCreate):
+    answer_id: int
+
+
+class AnswerDelete(BaseModel):
+    answer_id: int

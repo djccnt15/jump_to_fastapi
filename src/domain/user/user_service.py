@@ -10,7 +10,7 @@ from src import configuration
 from src.configuration import pwd_context
 from src.db.database import get_db
 from src.db.entity import UserEntity
-from src.db.repository import create_entity, user_repo
+from src.db.repository import save_entity, user_repo
 
 from .user_model import Token, TokenData, UserCreate
 
@@ -28,7 +28,7 @@ def create_user(db: Session, user_create: UserCreate):
         password=pwd_context.hash(user_create.password1),
         email=user_create.email,
     )
-    create_entity(db, db_user)
+    save_entity(db, db_user)
 
 
 def create_user_token(form_data: OAuth2PasswordRequestForm, db: Session) -> Token:

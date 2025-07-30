@@ -7,7 +7,13 @@ from src.db.entity import UserEntity
 from src.domain.user import user_service
 
 from . import question_service
-from .question_model import QuestionCreate, QuestionList, QuestionResponse
+from .question_model import (
+    QuestionCreate,
+    QuestionDelete,
+    QuestionList,
+    QuestionResponse,
+    QuestionUpdate,
+)
 
 router = APIRouter(prefix="/question")
 
@@ -42,3 +48,21 @@ def question_create(
         question_create=question_create,
         user=current_user,
     )
+
+
+@router.put("/update", status_code=status.HTTP_204_NO_CONTENT)
+def question_update(
+    _question_update: QuestionUpdate,
+    db: Session = Depends(get_db),
+    current_user: UserEntity = Depends(user_service.get_current_user),
+) -> None:
+    question_service.update_question(db, _question_update, current_user)
+
+
+@router.delete("/delete", status_code=status.HTTP_204_NO_CONTENT)
+def question_delete(
+    _question_delete: QuestionDelete,
+    db: Session = Depends(get_db),
+    current_user: UserEntity = Depends(user_service.get_current_user),
+) -> None:
+    question_service.delete_question(db, _question_delete, current_user)
