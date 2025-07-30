@@ -12,6 +12,7 @@ class Question(Base):
     content = Column(Text, nullable=False)
     create_date = Column(DateTime, nullable=False)
     user_id = Column(Integer, ForeignKey("user.id"), nullable=True)
+    modify_date = Column(DateTime, nullable=True)
     user = relationship("User", backref="question_users")
 
 
@@ -23,6 +24,7 @@ class Answer(Base):
     create_date = Column(DateTime, nullable=False)
     question_id = Column(Integer, ForeignKey("question.id"))
     user_id = Column(Integer, ForeignKey("user.id"), nullable=True)
+    modify_date = Column(DateTime, nullable=True)
     question = relationship("Question", backref="answers")
     user = relationship("User", backref="answer_users")
 

@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from domain.answer.answer_schema import AnswerCreate
+from domain.answer.answer_schema import AnswerCreate, AnswerUpdate
 from sqlalchemy.orm import Session
 
 from models import Answer, Question, User
@@ -19,4 +19,20 @@ def create_answer(
         user=user,
     )
     db.add(db_answer)
+    db.commit()
+
+
+def get_answer(db: Session, answer_id: int):
+    return db.query(Answer).get(answer_id)
+
+
+def update_answer(db: Session, db_answer: Answer, answer_update: AnswerUpdate):
+    db_answer.content = answer_update.content
+    db_answer.modify_date = datetime.now()
+    db.add(db_answer)
+    db.commit()
+
+
+def delete_answer(db: Session, db_answer: Answer):
+    db.delete(db_answer)
     db.commit()
