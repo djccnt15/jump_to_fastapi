@@ -13,6 +13,7 @@ class Question(BaseModel):
     modify_date: datetime.datetime | None = None
     answers: list[Answer] = []
     user: User | None
+    voter: list[User] = []
 
 
 class QuestionCreate(BaseModel):
@@ -36,4 +37,8 @@ class QuestionUpdate(QuestionCreate):
 
 
 class QuestionDelete(BaseModel):
+    question_id: int
+
+
+class QuestionVote(BaseModel):
     question_id: int
