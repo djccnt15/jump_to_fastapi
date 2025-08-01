@@ -17,8 +17,13 @@ from .question_model import (
 )
 
 
-def get_question_list(*, db: Session, page: int, size: int) -> QuestionList:
-    question_list = question_repo.get_question_list(db, skip=page * size, limit=size)
+def get_question_list(*, db: Session, page: int, size: int, kw: str) -> QuestionList:
+    question_list = question_repo.get_question_list(
+        db,
+        skip=page * size,
+        limit=size,
+        keyword=kw,
+    )
     # TODO. (refactoring) `get_question_list` 함수 리팩토링 후 코드 수정
     return QuestionList(
         total=question_list[0],

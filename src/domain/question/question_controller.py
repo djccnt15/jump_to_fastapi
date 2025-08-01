@@ -24,8 +24,14 @@ def question_list(
     db: Session = Depends(get_db),
     page: int = 0,
     size: int = 10,
+    keyword: str = "",
 ) -> QuestionList:
-    question_list = question_service.get_question_list(db=db, page=page, size=size)
+    question_list = question_service.get_question_list(
+        db=db,
+        page=page,
+        size=size,
+        kw=keyword,
+    )
     return question_list
 
 
