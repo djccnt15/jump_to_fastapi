@@ -14,6 +14,7 @@ class QuestionResponse(BaseModel):
     modify_date: datetime.datetime | None = None
     answers: list[AnswerResponse] = []
     user: User | None
+    voter: list[User] = []
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -39,4 +40,8 @@ class QuestionUpdate(QuestionCreate):
 
 
 class QuestionDelete(BaseModel):
+    question_id: int
+
+
+class QuestionVote(BaseModel):
     question_id: int

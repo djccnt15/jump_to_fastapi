@@ -1,9 +1,23 @@
 from datetime import datetime
 
-from sqlalchemy import DateTime, ForeignKey, Integer, String, Text
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Table, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.db import BaseEntity
+
+question_voter = Table(
+    "question_voter",
+    BaseEntity.metadata,
+    Column("user_id", Integer, ForeignKey("user.id"), primary_key=True),
+    Column("question_id", Integer, ForeignKey("question.id"), primary_key=True),
+)
+
+answer_voter = Table(
+    "answer_voter",
+    BaseEntity.metadata,
+    Column("user_id", Integer, ForeignKey("user.id"), primary_key=True),
+    Column("answer_id", Integer, ForeignKey("answer.id"), primary_key=True),
+)
 
 
 class QuestionEntity(BaseEntity):
@@ -17,6 +31,11 @@ class QuestionEntity(BaseEntity):
     modify_date: Mapped[datetime] = mapped_column(DateTime, nullable=True)
 
     user: Mapped["UserEntity"] = relationship("UserEntity", backref="question_users")
+    voter: Mapped[list["UserEntity"]] = relationship(
+        "UserEntity",
+        secondary=question_voter,
+        backref="question_voters",
+    )
 
 
 class AnswerEntity(BaseEntity):
@@ -29,8 +48,15 @@ class AnswerEntity(BaseEntity):
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"), nullable=True)
     modify_date: Mapped[datetime] = mapped_column(DateTime, nullable=True)
 
-    question: Mapped[QuestionEntity] = relationship("QuestionEntity", backref="answers")
+    question: Mapped["QuestionEntity"] = relationship(
+        "QuestionEntity", backref="answers"
+    )
     user: Mapped["UserEntity"] = relationship("UserEntity", backref="answer_users")
+    voter: Mapped[list["UserEntity"]] = relationship(
+        "UserEntity",
+        secondary=answer_voter,
+        backref="answer_voters",
+    )
 
 
 class UserEntity(BaseEntity):

@@ -13,6 +13,7 @@ from .question_model import (
     QuestionList,
     QuestionResponse,
     QuestionUpdate,
+    QuestionVote,
 )
 
 router = APIRouter(prefix="/question")
@@ -66,3 +67,14 @@ def question_delete(
     current_user: UserEntity = Depends(user_service.get_current_user),
 ) -> None:
     question_service.delete_question(db, _question_delete, current_user)
+
+
+@router.post("/vote", status_code=status.HTTP_204_NO_CONTENT)
+def question_vote(
+    _question_vote: QuestionVote,
+    db: Session = Depends(get_db),
+    current_user: UserEntity = Depends(user_service.get_current_user),
+) -> None:
+    question_service.vote_question(
+        question_vote=_question_vote, db=db, user=current_user
+    )

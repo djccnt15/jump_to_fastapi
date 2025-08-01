@@ -7,7 +7,13 @@ from src.db.entity import UserEntity
 from src.domain.user import user_service
 
 from . import answer_service
-from .answer_model import AnswerCreate, AnswerDelete, AnswerResponse, AnswerUpdate
+from .answer_model import (
+    AnswerCreate,
+    AnswerDelete,
+    AnswerResponse,
+    AnswerUpdate,
+    AnswerVote,
+)
 
 router = APIRouter(prefix="/answer")
 
@@ -48,3 +54,12 @@ def answer_delete(
     current_user: UserEntity = Depends(user_service.get_current_user),
 ) -> None:
     answer_service.delete_answer(db=db, answer_delete=_answer_delete, user=current_user)
+
+
+@router.post("/vote", status_code=status.HTTP_204_NO_CONTENT)
+def answer_vote(
+    _answer_vote: AnswerVote,
+    db: Session = Depends(get_db),
+    current_user: UserEntity = Depends(user_service.get_current_user),
+) -> None:
+    answer_service.vote_answer(answer_vote=_answer_vote, db=db, user=current_user)

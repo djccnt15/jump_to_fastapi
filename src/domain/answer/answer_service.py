@@ -7,7 +7,13 @@ from starlette import status
 from src.db.entity import AnswerEntity, UserEntity
 from src.db.repository import answer_repo, delete_entity, question_repo, save_entity
 
-from .answer_model import AnswerCreate, AnswerDelete, AnswerResponse, AnswerUpdate
+from .answer_model import (
+    AnswerCreate,
+    AnswerDelete,
+    AnswerResponse,
+    AnswerUpdate,
+    AnswerVote,
+)
 
 
 def create_answer(
@@ -70,3 +76,14 @@ def delete_answer(*, db: Session, answer_delete: AnswerDelete, user: UserEntity)
             detail="삭제 권한이 없습니다.",
         )
     delete_entity(db, db_answer)
+
+
+def vote_answer(*, answer_vote: AnswerVote, db: Session, user: UserEntity):
+    db_answer = answer_repo.get_answer(db, answer_id=answer_vote.answer_id)
+    if not db_answer:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="데이터를 찾을수 없습니다.",
+        )
+    db_answer.voter.append(user)
+    db.commit()

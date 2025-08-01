@@ -6,6 +6,7 @@ from starlette import status
 
 from src.db.entity import QuestionEntity, UserEntity
 from src.db.repository import delete_entity, question_repo, save_entity
+from src.domain.question.question_model import QuestionVote
 
 from .question_model import (
     QuestionCreate,
@@ -70,3 +71,14 @@ def delete_question(db: Session, question_delete: QuestionDelete, user: UserEnti
             status_code=status.HTTP_400_BAD_REQUEST, detail="삭제 권한이 없습니다."
         )
     delete_entity(db, question)
+
+
+def vote_question(*, question_vote: QuestionVote, db: Session, user: UserEntity):
+    db_question = question_repo.get_question(db, question_id=question_vote.question_id)
+    if not db_question:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="데이터를 찾을수 없습니다.",
+        )
+    db_question.voter.append(user)
+    db.commit()

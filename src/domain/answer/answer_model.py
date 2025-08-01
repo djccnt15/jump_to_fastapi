@@ -22,6 +22,7 @@ class AnswerResponse(BaseModel):
     question_id: int
     modify_date: datetime.datetime | None = None
     user: User | None
+    voter: list[User] = []
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -31,4 +32,8 @@ class AnswerUpdate(AnswerCreate):
 
 
 class AnswerDelete(BaseModel):
+    answer_id: int
+
+
+class AnswerVote(BaseModel):
     answer_id: int
