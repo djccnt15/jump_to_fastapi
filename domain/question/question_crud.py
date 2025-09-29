@@ -1,10 +1,12 @@
 from datetime import datetime
 
 from domain.question.question_schema import QuestionCreate, QuestionUpdate
-from sqlalchemy import and_
 from sqlalchemy.orm import Session, selectinload
+from sqlalchemy.sql import and_, text
 
 from models import Answer, Question, User
+
+from .question_schema import QuestionV2
 
 
 def get_question_list(db: Session, skip: int = 0, limit: int = 10, keyword: str = ""):
@@ -88,6 +90,81 @@ def get_question_list_v2(
         .all()
     )
     return total, question_list  # (전체 건수, 페이징 적용된 질문 목록)
+
+
+def get_question_list_v3(
+    db: Session,
+    *,
+    skip: int = 0,
+    limit: int = 10,
+    keyword: str = "",
+) -> list[QuestionV2]:
+    stmt = """
+WITH question_votes AS (
+    SELECT question_id, COUNT(*) AS qv_count
+    FROM question_voter qv
+    GROUP BY question_id
+),
+answer_counts AS (
+    SELECT a.question_id, COUNT(*) AS a_count
+    FROM answer a
+    GROUP BY a.question_id
+)
+SELECT DISTINCT
+    q.id
+    , q.subject
+    , q.content
+    , q.create_date
+    , q.modify_date
+    , qu.username AS user
+    , qv_count AS voter
+    , a_count AS answers
+FROM question q
+LEFT JOIN "user" qu ON qu.id = q.user_id
+LEFT JOIN answer a ON a.question_id = q.id
+LEFT JOIN "user" au ON a.user_id = au.id
+LEFT JOIN question_votes ON question_votes.question_id = q.id
+LEFT JOIN answer_counts ON answer_counts.question_id = q.id
+WHERE :kw IS NULL
+    OR q.subject LIKE :kw
+    OR q.content LIKE :kw
+    OR qu.username LIKE :kw
+    OR a.content LIKE :kw
+    OR au.username LIKE :kw
+ORDER BY q.id DESC
+LIMIT :rows OFFSET :page
+;
+"""
+    params = {"kw": f"%{keyword}%" if keyword else None, "rows": limit, "page": skip}
+    res = db.execute(text(stmt), params=params)
+    question_list = [
+        QuestionV2.model_validate(dict(zip(res.keys(), row))) for row in res.all()
+    ]
+    return question_list
+
+
+def get_question_count_v3(
+    db: Session,
+    *,
+    keyword: str = "",
+) -> int:
+    stmt = """
+SELECT COUNT(DISTINCT q.id) AS total
+FROM question q
+LEFT JOIN "user" qu ON qu.id = q.user_id
+LEFT JOIN answer a ON a.question_id = q.id
+LEFT JOIN "user" au ON a.user_id = au.id
+WHERE :kw IS NULL
+    OR q.subject LIKE :kw
+    OR q.content LIKE :kw
+    OR qu.username LIKE :kw
+    OR a.content LIKE :kw
+    OR au.username LIKE :kw
+;
+"""
+    params = {"kw": f"%{keyword}%" if keyword else None}
+    res = db.execute(text(stmt), params=params)
+    return res.scalar_one()
 
 
 def get_question(db: Session, question_id: int):

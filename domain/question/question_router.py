@@ -25,6 +25,20 @@ def question_list(
     return {"total": total, "question_list": _question_list}
 
 
+@router.get("/list/v2", response_model=question_schema.QuestionListV2)
+def question_list_v2(
+    db: Session = Depends(get_db),
+    page: int = 0,
+    size: int = 10,
+    keyword: str = "",
+):
+    total = question_crud.get_question_count_v3(db, keyword=keyword)
+    _question_list = question_crud.get_question_list_v3(
+        db, skip=page * size, limit=size, keyword=keyword
+    )
+    return {"total": total, "question_list": _question_list}
+
+
 @router.get("/detail/{question_id}", response_model=question_schema.Question)
 def question_detail(question_id: int, db: Session = Depends(get_db)):
     question = question_crud.get_question(db, question_id=question_id)

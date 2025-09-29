@@ -2,7 +2,7 @@ import datetime
 
 from domain.answer.answer_schema import Answer
 from domain.user.user_schema import User
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, ConfigDict, field_validator
 
 
 class Question(BaseModel):
@@ -14,6 +14,19 @@ class Question(BaseModel):
     answers: list[Answer] = []
     user: User | None
     voter: list[User] = []
+
+
+class QuestionV2(BaseModel):
+    id: int
+    subject: str
+    content: str
+    create_date: datetime.datetime
+    modify_date: datetime.datetime | None = None
+    user: str | None
+    voter: int | None
+    answers: int | None
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class QuestionCreate(BaseModel):
@@ -30,6 +43,11 @@ class QuestionCreate(BaseModel):
 class QuestionList(BaseModel):
     total: int = 0
     question_list: list[Question] = []
+
+
+class QuestionListV2(BaseModel):
+    total: int = 0
+    question_list: list[QuestionV2] = []
 
 
 class QuestionUpdate(QuestionCreate):
